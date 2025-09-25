@@ -50,7 +50,7 @@ serve(async (req) => {
       .insert({
         customer_email,
         customer_name,
-        total_amount: 25000, // €250 total (65 + 185)
+        total_amount: 1000, // €10 total (3 + 7)
         currency: 'eur',
         stripe_customer_id: customer.id,
         status: 'pending'
@@ -69,13 +69,13 @@ serve(async (req) => {
     const payments = [
       {
         plan_id: plan.id,
-        amount: 6500, // €65 in cents
+        amount: 300, // €3 in cents
         due_date: new Date().toISOString(), // Pay now
       },
       {
         plan_id: plan.id,
-        amount: 18500, // €185 in cents
-        due_date: new Date('2026-01-06').toISOString(), // Jan 6, 2026
+        amount: 700, // €7 in cents
+        due_date: new Date('2025-09-26').toISOString(), // Sep 26, 2025
       }
     ];
 
@@ -92,7 +92,7 @@ serve(async (req) => {
 
     // Create immediate payment intent for first payment
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 6500, // €65
+      amount: 300, // €3
       currency: 'eur',
       customer: customer.id,
       setup_future_usage: 'off_session',
@@ -120,7 +120,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'An error occurred' }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,

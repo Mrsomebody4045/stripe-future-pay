@@ -75,7 +75,7 @@ const CheckoutForm = () => {
 
       toast({
         title: "Payment Successful!",
-        description: "First payment of €65 completed. Next payment of €185 will be automatically charged on January 6, 2026.",
+        description: "First payment of €3 completed. Next payment of €7 will be automatically charged on September 26, 2025.",
       });
 
       // Reset form
@@ -99,7 +99,7 @@ const CheckoutForm = () => {
       <CardHeader>
         <CardTitle>Installment Payment</CardTitle>
         <CardDescription>
-          Pay €65 now, then €185 automatically on January 6, 2026
+          Pay €3 now, then €7 automatically on September 26, 2025
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -150,9 +150,9 @@ const CheckoutForm = () => {
           <div className="bg-muted p-4 rounded-lg">
             <h4 className="font-medium mb-2">Payment Schedule:</h4>
             <ul className="text-sm space-y-1">
-              <li>• Today: €65.00</li>
-              <li>• January 6, 2026: €185.00</li>
-              <li className="font-medium">• Total: €250.00</li>
+              <li>• Today: €3.00</li>
+              <li>• September 26, 2025: €7.00</li>
+              <li className="font-medium">• Total: €10.00</li>
             </ul>
           </div>
 
@@ -161,7 +161,7 @@ const CheckoutForm = () => {
             className="w-full" 
             disabled={!stripe || loading}
           >
-            {loading ? 'Processing...' : 'Pay €65 Now'}
+            {loading ? 'Processing...' : 'Pay €3 Now'}
           </Button>
         </form>
       </CardContent>
