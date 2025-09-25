@@ -1,1 +1,7 @@
 project_id = "pqzznpnbtlgmrlsmdhkv"
+
+[functions.create-installment-plan]
+verify_jwt = false
+
+[functions.process-scheduled-payments]
+verify_jwt = false
