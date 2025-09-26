@@ -15,8 +15,34 @@ const CheckoutForm = () => {
   const elements = useElements();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [processingPayment, setProcessingPayment] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+
+  const triggerPaymentNow = async () => {
+    setProcessingPayment(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('trigger-payment-now', {
+        body: {}
+      });
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Payment Processed!",
+        description: "The remaining €7 payment has been charged successfully.",
+      });
+    } catch (error) {
+      console.error('Payment trigger failed:', error);
+      toast({
+        title: "Payment Failed",
+        description: error instanceof Error ? error.message : "An error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -163,6 +189,18 @@ const CheckoutForm = () => {
           >
             {loading ? 'Processing...' : 'Pay €3 Now'}
           </Button>
+          
+          <div className="pt-4 border-t">
+            <Button 
+              type="button"
+              variant="outline"
+              className="w-full" 
+              onClick={triggerPaymentNow}
+              disabled={processingPayment}
+            >
+              {processingPayment ? 'Processing €7 Payment...' : 'Process Remaining €7 Now'}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
