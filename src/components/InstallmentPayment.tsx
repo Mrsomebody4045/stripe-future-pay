@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { loadStripe } from '@stripe/stripe-js';
-import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { Elements, CardElement, useStripe, useElements, PaymentRequestButtonElement } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe('pk_test_51S1VA0Lb8rPy9vMDTL2NCdvJKu0zLJc88gOhfXQiNtlKXX2Shz0BAGnLK2fw4D1BKWNJfyKHZgmdSXZOkb7aEHnT00xVNJGGqW');
 
@@ -17,7 +17,96 @@ const CheckoutForm = () => {
   const [loading, setLoading] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [paymentRequest, setPaymentRequest] = useState<any>(null);
+  const [canMakePayment, setCanMakePayment] = useState(false);
 
+  // Set up Apple Pay / Google Pay
+  useEffect(() => {
+    if (stripe) {
+      const pr = stripe.paymentRequest({
+        country: 'IE',
+        currency: 'eur',
+        total: {
+          label: 'First Installment Payment',
+          amount: 300, // €3 in cents
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+
+      // Check if Apple Pay / Google Pay is available
+      pr.canMakePayment().then(result => {
+        if (result) {
+          setPaymentRequest(pr);
+          setCanMakePayment(true);
+        }
+      });
+
+      pr.on('paymentmethod', async (event) => {
+        try {
+          // Validate required fields
+          if (!event.payerName || !event.payerEmail) {
+            event.complete('fail');
+            toast({
+              title: "Error",
+              description: "Name and email are required for installment payments",
+              variant: "destructive",
+            });
+            return;
+          }
+
+          // Create installment plan
+          const { data, error } = await supabase.functions.invoke('create-installment-plan', {
+            body: {
+              customer_name: event.payerName,
+              customer_email: event.payerEmail,
+            },
+          });
+
+          if (error) throw error;
+
+          const { client_secret, setup_intent_client_secret } = data;
+
+          // Set up the payment method for future use
+          const setupResult = await stripe.confirmCardSetup(setup_intent_client_secret, {
+            payment_method: event.paymentMethod.id,
+          });
+
+          if (setupResult.error) {
+            throw new Error(setupResult.error.message);
+          }
+
+          // Confirm the immediate payment
+          const paymentResult = await stripe.confirmCardPayment(client_secret, {
+            payment_method: event.paymentMethod.id,
+          });
+
+          if (paymentResult.error) {
+            throw new Error(paymentResult.error.message);
+          }
+
+          event.complete('success');
+          toast({
+            title: "Payment Successful!",
+            description: "First payment of €3 completed. Next payment of €7 will be automatically charged on October 1st, 2025.",
+          });
+
+          // Reset form
+          setCustomerName('');
+          setCustomerEmail('');
+
+        } catch (error) {
+          console.error('Payment failed:', error);
+          event.complete('fail');
+          toast({
+            title: "Payment Failed",
+            description: error instanceof Error ? error.message : "An error occurred",
+            variant: "destructive",
+          });
+        }
+      });
+    }
+  }, [stripe, toast]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -147,6 +236,36 @@ const CheckoutForm = () => {
               />
             </div>
           </div>
+
+          {canMakePayment && paymentRequest && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Quick Payment</Label>
+                <div className="border rounded-md p-3">
+                  <PaymentRequestButtonElement
+                    options={{
+                      paymentRequest,
+                      style: {
+                        paymentRequestButton: {
+                          type: 'default',
+                          theme: 'dark',
+                          height: '40px',
+                        },
+                      },
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">Or pay with card</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="bg-muted p-4 rounded-lg">
             <h4 className="font-medium mb-2">Payment Schedule:</h4>
