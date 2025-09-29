@@ -36,10 +36,16 @@ const CheckoutForm = () => {
 
       // Check if Apple Pay / Google Pay is available
       pr.canMakePayment().then(result => {
+        console.log('Payment Request canMakePayment result:', result);
         if (result) {
+          console.log('Apple Pay/Google Pay is available');
           setPaymentRequest(pr);
           setCanMakePayment(true);
+        } else {
+          console.log('Apple Pay/Google Pay is not available');
         }
+      }).catch(error => {
+        console.error('Error checking payment request availability:', error);
       });
 
       pr.on('paymentmethod', async (event) => {
