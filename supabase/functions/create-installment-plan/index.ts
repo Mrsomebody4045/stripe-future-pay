@@ -75,7 +75,7 @@ serve(async (req) => {
       {
         plan_id: plan.id,
         amount: 700, // €7 in cents
-        due_date: new Date('2025-09-26').toISOString(), // Sep 26, 2025
+        due_date: new Date('2025-10-01').toISOString(), // Oct 1, 2025
       }
     ];
 
