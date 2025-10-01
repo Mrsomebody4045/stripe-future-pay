@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements, PaymentRequestButtonElement } from '@stripe/react-stripe-js';
 
-const stripePromise = loadStripe('pk_test_51S1VA0Lb8rPy9vMDTL2NCdvJKu0zLJc88gOhfXQiNtlKXX2Shz0BAGnLK2fw4D1BKWNJfyKHZgmdSXZOkb7aEHnT00xVNJGGqW');
+const stripePromise = loadStripe('pk_live_51S1VA0Lb8rPy9vMDy4jdzYaXKxvd5NawJ3GsGRUnMnKGLgSIj0GsqJ1bVidhzQXq7WbLo2JD88HsMivfOZ9ddXyU00uI1Zy6t3');
 
 const CheckoutForm = () => {
   const stripe = useStripe();
