@@ -140,6 +140,9 @@ const CheckoutForm = () => {
       return;
     }
 
+    // Prevent double submission
+    if (loading) return;
+
     setLoading(true);
 
     try {
@@ -205,6 +208,9 @@ const CheckoutForm = () => {
       // Reset form
       setCustomerName('');
       setCustomerEmail('');
+      
+      // Clear card element
+      elements.getElement(CardElement)?.clear();
 
     } catch (error) {
       console.error('Payment failed:', error);

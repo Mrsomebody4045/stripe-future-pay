@@ -18,6 +18,9 @@ serve(async (req) => {
 
     console.log('Creating installment plan for:', customer_email);
 
+    // Generate idempotency key to prevent duplicate charges
+    const idempotencyKey = `${customer_email}-${Date.now()}`;
+
     // Initialize Stripe
     const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
       apiVersion: '2023-10-16',
@@ -65,7 +68,7 @@ serve(async (req) => {
 
     console.log('Created installment plan:', plan.id);
 
-    // Create immediate payment intent for first payment
+    // Create immediate payment intent for first payment with idempotency
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 300, // €3
       currency: 'eur',
@@ -73,8 +76,11 @@ serve(async (req) => {
       setup_future_usage: 'off_session',
       metadata: {
         plan_id: plan.id,
-        payment_type: 'first_installment'
+        payment_type: 'first_installment',
+        customer_email: customer_email
       }
+    }, {
+      idempotencyKey: `payment-${idempotencyKey}`
     });
 
     console.log('Created payment intent:', paymentIntent.id);
