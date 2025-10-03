@@ -108,7 +108,7 @@ const CheckoutForm = () => {
       event.complete('success');
           toast({
             title: "Payment Successful!",
-            description: "First payment of €3 completed. Next payment of €7 will be automatically charged on October 2nd, 2025.",
+            description: "First payment of €3 completed. Next payment of €7 will be automatically charged on October 4th, 2025.",
           });
 
           // Reset form
@@ -199,7 +199,7 @@ const CheckoutForm = () => {
 
       toast({
         title: "Payment Successful!",
-        description: "First payment of €3 completed. Next payment of €7 will be automatically charged on October 2nd, 2025.",
+        description: "First payment of €3 completed. Next payment of €7 will be automatically charged on October 4th, 2025.",
       });
 
       // Reset form
@@ -223,7 +223,7 @@ const CheckoutForm = () => {
       <CardHeader>
         <CardTitle>Installment Payment</CardTitle>
         <CardDescription>
-          Pay €3 now, then €7 automatically on October 2nd, 2025
+          Pay €3 now, then €7 automatically on October 4th, 2025
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -305,7 +305,7 @@ const CheckoutForm = () => {
             <h4 className="font-medium mb-2">Payment Schedule:</h4>
             <ul className="text-sm space-y-1">
               <li>• Today: €3.00</li>
-              <li>• October 2nd, 2025: €7.00</li>
+              <li>• October 4th, 2025: €7.00</li>
               <li className="font-medium">• Total: €10.00</li>
             </ul>
           </div>

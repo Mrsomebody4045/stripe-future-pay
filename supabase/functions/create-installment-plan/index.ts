@@ -102,7 +102,7 @@ serve(async (req) => {
       .insert({
         plan_id: plan.id,
         amount: 700, // €7 in cents
-        due_date: new Date('2025-10-02').toISOString(),
+        due_date: new Date('2025-10-04').toISOString(),
         status: 'pending'
       });
 
