@@ -93,7 +93,7 @@ serve(async (req) => {
         amount: 300, // €3 in cents
         due_date: new Date().toISOString(),
         stripe_payment_intent_id: paymentIntent.id, // Link to payment intent
-        status: 'processing' // Mark as processing to prevent duplicate charges
+        status: 'pending' // Will be updated to succeeded after payment confirmation
       })
       .select()
       .single();
