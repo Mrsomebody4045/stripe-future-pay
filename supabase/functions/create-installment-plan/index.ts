@@ -65,31 +65,6 @@ serve(async (req) => {
 
     console.log('Created installment plan:', plan.id);
 
-    // Create the two payments
-    const payments = [
-      {
-        plan_id: plan.id,
-        amount: 300, // €3 in cents
-        due_date: new Date().toISOString(), // Pay now
-      },
-      {
-        plan_id: plan.id,
-        amount: 700, // €7 in cents
-        due_date: new Date('2025-10-02').toISOString(), // Oct 2, 2025
-      }
-    ];
-
-    const { error: paymentsError } = await supabase
-      .from('installment_payments')
-      .insert(payments);
-
-    if (paymentsError) {
-      console.error('Error creating payments:', paymentsError);
-      throw paymentsError;
-    }
-
-    console.log('Created installment payments');
-
     // Create immediate payment intent for first payment
     const paymentIntent = await stripe.paymentIntents.create({
       amount: 300, // €3
@@ -104,9 +79,44 @@ serve(async (req) => {
 
     console.log('Created payment intent:', paymentIntent.id);
 
+    // Create the two payment records
+    const { data: firstPayment, error: firstPaymentError } = await supabase
+      .from('installment_payments')
+      .insert({
+        plan_id: plan.id,
+        amount: 300, // €3 in cents
+        due_date: new Date().toISOString(),
+        stripe_payment_intent_id: paymentIntent.id, // Link to payment intent
+        status: 'processing' // Mark as processing to prevent duplicate charges
+      })
+      .select()
+      .single();
+
+    if (firstPaymentError) {
+      console.error('Error creating first payment:', firstPaymentError);
+      throw firstPaymentError;
+    }
+
+    const { error: secondPaymentError } = await supabase
+      .from('installment_payments')
+      .insert({
+        plan_id: plan.id,
+        amount: 700, // €7 in cents
+        due_date: new Date('2025-10-02').toISOString(),
+        status: 'pending'
+      });
+
+    if (secondPaymentError) {
+      console.error('Error creating second payment:', secondPaymentError);
+      throw secondPaymentError;
+    }
+
+    console.log('Created installment payments');
+
     return new Response(
       JSON.stringify({
         plan_id: plan.id,
+        first_payment_id: firstPayment.id,
         client_secret: paymentIntent.client_secret,
         setup_intent_client_secret: setupIntent.client_secret,
         customer_id: customer.id

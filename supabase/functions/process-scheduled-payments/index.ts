@@ -51,6 +51,12 @@ serve(async (req) => {
       try {
         console.log(`Processing payment ${payment.id} for ${payment.amount} cents`);
 
+        // Skip if payment already has a payment intent (prevents double charging)
+        if (payment.stripe_payment_intent_id) {
+          console.log(`Payment ${payment.id} already has payment intent ${payment.stripe_payment_intent_id}, skipping`);
+          continue;
+        }
+
         // Get customer's saved payment methods
         const paymentMethods = await stripe.paymentMethods.list({
           customer: payment.installment_plans.stripe_customer_id,
@@ -59,6 +65,13 @@ serve(async (req) => {
 
         if (paymentMethods.data.length === 0) {
           console.log(`No payment methods found for customer ${payment.installment_plans.stripe_customer_id}`);
+          
+          // Mark payment as failed due to missing payment method
+          await supabase
+            .from('installment_payments')
+            .update({ status: 'failed' })
+            .eq('id', payment.id);
+          
           continue;
         }
 

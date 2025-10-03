@@ -69,29 +69,43 @@ const CheckoutForm = () => {
             },
           });
 
-          if (error) throw error;
+      if (error) throw error;
 
-          const { client_secret, setup_intent_client_secret } = data;
+      const { client_secret, setup_intent_client_secret, first_payment_id } = data;
 
-          // Set up the payment method for future use
-          const setupResult = await stripe.confirmCardSetup(setup_intent_client_secret, {
-            payment_method: event.paymentMethod.id,
-          });
+      // Set up the payment method for future use
+      const setupResult = await stripe.confirmCardSetup(setup_intent_client_secret, {
+        payment_method: event.paymentMethod.id,
+      });
 
-          if (setupResult.error) {
-            throw new Error(setupResult.error.message);
-          }
+      if (setupResult.error) {
+        throw new Error(setupResult.error.message);
+      }
 
-          // Confirm the immediate payment
-          const paymentResult = await stripe.confirmCardPayment(client_secret, {
-            payment_method: event.paymentMethod.id,
-          });
+      // Confirm the immediate payment
+      const paymentResult = await stripe.confirmCardPayment(client_secret, {
+        payment_method: event.paymentMethod.id,
+      });
 
-          if (paymentResult.error) {
-            throw new Error(paymentResult.error.message);
-          }
+      if (paymentResult.error) {
+        throw new Error(paymentResult.error.message);
+      }
 
-          event.complete('success');
+      // Update first payment record to succeeded
+      const { error: updateError } = await supabase
+        .from('installment_payments')
+        .update({
+          status: 'succeeded',
+          paid_at: new Date().toISOString(),
+          payment_method_id: event.paymentMethod.id
+        })
+        .eq('id', first_payment_id);
+
+      if (updateError) {
+        console.error('Error updating payment status:', updateError);
+      }
+
+      event.complete('success');
           toast({
             title: "Payment Successful!",
             description: "First payment of €3 completed. Next payment of €7 will be automatically charged on October 2nd, 2025.",
@@ -139,7 +153,7 @@ const CheckoutForm = () => {
 
       if (error) throw error;
 
-      const { client_secret, setup_intent_client_secret } = data;
+      const { client_secret, setup_intent_client_secret, first_payment_id } = data;
 
       // Confirm the payment for first installment
       const cardElement = elements.getElement(CardElement);
@@ -167,6 +181,20 @@ const CheckoutForm = () => {
 
       if (paymentResult.error) {
         throw new Error(paymentResult.error.message);
+      }
+
+      // Update first payment record to succeeded
+      const { error: updateError } = await supabase
+        .from('installment_payments')
+        .update({
+          status: 'succeeded',
+          paid_at: new Date().toISOString(),
+          payment_method_id: setupResult.setupIntent.payment_method as string
+        })
+        .eq('id', first_payment_id);
+
+      if (updateError) {
+        console.error('Error updating payment status:', updateError);
       }
 
       toast({
