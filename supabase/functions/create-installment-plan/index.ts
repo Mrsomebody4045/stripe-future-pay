@@ -103,12 +103,16 @@ serve(async (req) => {
       throw firstPaymentError;
     }
 
+    // TEMPORARY: Set to 2 minutes from now for testing
+    const scheduledDate = new Date();
+    scheduledDate.setMinutes(scheduledDate.getMinutes() + 2);
+    
     const { error: secondPaymentError } = await supabase
       .from('installment_payments')
       .insert({
         plan_id: plan.id,
         amount: 700, // €7 in cents
-        due_date: new Date('2025-10-04').toISOString(),
+        due_date: scheduledDate.toISOString(),
         status: 'pending'
       });
 
