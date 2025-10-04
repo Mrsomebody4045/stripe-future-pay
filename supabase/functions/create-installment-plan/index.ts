@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { customer_name, customer_email } = await req.json();
+    const { customer_name, customer_email, first_amount, second_amount, second_payment_date } = await req.json();
 
     console.log('Creating installment plan for:', customer_email);
 
@@ -53,7 +53,7 @@ serve(async (req) => {
       .insert({
         customer_email,
         customer_name,
-        total_amount: 1000, // €10 total (3 + 7)
+        total_amount: first_amount + second_amount,
         currency: 'eur',
         stripe_customer_id: customer.id,
         status: 'pending'
@@ -70,7 +70,7 @@ serve(async (req) => {
 
     // Create immediate payment intent for first payment with idempotency
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: 300, // €3
+      amount: first_amount,
       currency: 'eur',
       customer: customer.id,
       setup_future_usage: 'off_session',
@@ -90,7 +90,7 @@ serve(async (req) => {
       .from('installment_payments')
       .insert({
         plan_id: plan.id,
-        amount: 300, // €3 in cents
+        amount: first_amount,
         due_date: new Date().toISOString(),
         stripe_payment_intent_id: paymentIntent.id, // Link to payment intent
         status: 'pending' // Will be updated to succeeded after payment confirmation
@@ -103,16 +103,12 @@ serve(async (req) => {
       throw firstPaymentError;
     }
 
-    // TEMPORARY: Set to 2 minutes from now for testing
-    const scheduledDate = new Date();
-    scheduledDate.setMinutes(scheduledDate.getMinutes() + 2);
-    
     const { error: secondPaymentError } = await supabase
       .from('installment_payments')
       .insert({
         plan_id: plan.id,
-        amount: 700, // €7 in cents
-        due_date: scheduledDate.toISOString(),
+        amount: second_amount,
+        due_date: second_payment_date,
         status: 'pending'
       });
 

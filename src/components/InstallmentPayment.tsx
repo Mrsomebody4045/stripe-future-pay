@@ -10,7 +10,15 @@ import { Elements, CardElement, useStripe, useElements, PaymentRequestButtonElem
 
 const stripePromise = loadStripe('pk_live_51S1VA0Lb8rPy9vMDy4jdzYaXKxvd5NawJ3GsGRUnMnKGLgSIj0GsqJ1bVidhzQXq7WbLo2JD88HsMivfOZ9ddXyU00uI1Zy6t3');
 
-const CheckoutForm = () => {
+interface PaymentProps {
+  firstAmount: number;
+  secondAmount: number;
+  secondPaymentDate: string;
+  title?: string;
+  description?: string;
+}
+
+const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, description }: PaymentProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -28,7 +36,7 @@ const CheckoutForm = () => {
         currency: 'eur',
         total: {
           label: 'First Installment Payment',
-          amount: 300, // €3 in cents
+          amount: firstAmount,
         },
         requestPayerName: true,
         requestPayerEmail: true,
@@ -66,6 +74,9 @@ const CheckoutForm = () => {
             body: {
               customer_name: event.payerName,
               customer_email: event.payerEmail,
+              first_amount: firstAmount,
+              second_amount: secondAmount,
+              second_payment_date: secondPaymentDate,
             },
           });
 
@@ -108,7 +119,7 @@ const CheckoutForm = () => {
       event.complete('success');
           toast({
             title: "Payment Successful!",
-            description: "First payment of €3 completed. Next payment of €7 will be automatically charged on October 4th, 2025.",
+            description: `First payment of €${(firstAmount / 100).toFixed(2)} completed. Next payment of €${(secondAmount / 100).toFixed(2)} will be automatically charged on ${new Date(secondPaymentDate).toLocaleDateString()}.`,
           });
 
           // Reset form
@@ -151,6 +162,9 @@ const CheckoutForm = () => {
         body: {
           customer_name: customerName,
           customer_email: customerEmail,
+          first_amount: firstAmount,
+          second_amount: secondAmount,
+          second_payment_date: secondPaymentDate,
         },
       });
 
@@ -202,7 +216,7 @@ const CheckoutForm = () => {
 
       toast({
         title: "Payment Successful!",
-        description: "First payment of €3 completed. Next payment of €7 will be automatically charged on October 4th, 2025.",
+        description: `First payment of €${(firstAmount / 100).toFixed(2)} completed. Next payment of €${(secondAmount / 100).toFixed(2)} will be automatically charged on ${new Date(secondPaymentDate).toLocaleDateString()}.`,
       });
 
       // Reset form
@@ -227,9 +241,9 @@ const CheckoutForm = () => {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Installment Payment</CardTitle>
+        <CardTitle>{title || 'Installment Payment'}</CardTitle>
         <CardDescription>
-          Pay €3 now, then €7 automatically on October 4th, 2025
+          {description || `Pay €${(firstAmount / 100).toFixed(2)} now, then €${(secondAmount / 100).toFixed(2)} automatically on ${new Date(secondPaymentDate).toLocaleDateString()}`}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -310,9 +324,9 @@ const CheckoutForm = () => {
           <div className="bg-muted p-4 rounded-lg">
             <h4 className="font-medium mb-2">Payment Schedule:</h4>
             <ul className="text-sm space-y-1">
-              <li>• Today: €3.00</li>
-              <li>• October 4th, 2025: €7.00</li>
-              <li className="font-medium">• Total: €10.00</li>
+              <li>• Today: €{(firstAmount / 100).toFixed(2)}</li>
+              <li>• {new Date(secondPaymentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}: €{(secondAmount / 100).toFixed(2)}</li>
+              <li className="font-medium">• Total: €{((firstAmount + secondAmount) / 100).toFixed(2)}</li>
             </ul>
           </div>
 
@@ -321,7 +335,7 @@ const CheckoutForm = () => {
             className="w-full" 
             disabled={!stripe || loading}
           >
-            {loading ? 'Processing...' : 'Pay €3 Now'}
+            {loading ? 'Processing...' : `Pay €${(firstAmount / 100).toFixed(2)} Now`}
           </Button>
         </form>
       </CardContent>
@@ -329,10 +343,10 @@ const CheckoutForm = () => {
   );
 };
 
-export const InstallmentPayment = () => {
+export const InstallmentPayment = (props: PaymentProps) => {
   return (
     <Elements stripe={stripePromise}>
-      <CheckoutForm />
+      <CheckoutForm {...props} />
     </Elements>
   );
 };
