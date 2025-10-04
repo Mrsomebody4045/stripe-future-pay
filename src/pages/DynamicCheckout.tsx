@@ -7,7 +7,6 @@ const ADDONS = {
   'Ski': { name: 'Ski gear', price: 1650 },
   'Snowboard': { name: 'Snowboard gear', price: 2250 },
   'Lessons': { name: 'Lessons (2hr session)', price: 5000 },
-  'Pool': { name: 'Pool Party', price: 0 },
 } as const;
 
 // Base package info
@@ -77,7 +76,7 @@ const DynamicCheckout = () => {
                     <li key={addon.key} className="flex justify-between">
                       <span>{addon.name}</span>
                       <span className="font-medium">
-                        {addon.price === 0 ? 'Free' : `€${(addon.price / 100).toFixed(2)}`}
+                        €{(addon.price / 100).toFixed(2)}
                       </span>
                     </li>
                   ))}
