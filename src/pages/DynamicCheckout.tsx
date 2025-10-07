@@ -13,13 +13,13 @@ const ADDONS = {
 const PACKAGES = {
   '185': { 
     name: '€185 Package',
-    deposit: 5600, // €56
+    deposit: 5000, // €50
     remaining: 12900, // €129
     total: 18500
   },
   '245': { 
     name: '€245 Package',
-    deposit: 7400, // €74
+    deposit: 7500, // €75
     remaining: 17100, // €171
     total: 24500
   },
@@ -48,10 +48,11 @@ const DynamicCheckout = () => {
       ...ADDONS[key as keyof typeof ADDONS]
     }));
 
-  // Calculate totals
+  // Calculate totals (admin fee is 300 cents = €3)
   const packageInfo = PACKAGES[basePackage];
   const addonsTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
-  const depositTotal = packageInfo.deposit + addonsTotal;
+  const adminFee = 300;
+  const depositTotal = packageInfo.deposit + addonsTotal + adminFee;
   const remainingTotal = packageInfo.remaining;
 
   // Build description
@@ -66,8 +67,10 @@ const DynamicCheckout = () => {
           <h1 className="text-4xl font-bold text-primary">
             Trakia Trips Booking
           </h1>
+          <h2 className="text-2xl font-semibold text-muted-foreground">
+            {basePackage === '185' ? '€185 Package' : '€245 Package'}
+          </h2>
           <div className="space-y-2">
-            <p className="text-2xl font-semibold">{packageInfo.name}</p>
             {selectedAddons.length > 0 && (
               <div className="bg-card p-4 rounded-lg border">
                 <h3 className="font-semibold mb-2">Selected Add-ons:</h3>
@@ -92,8 +95,11 @@ const DynamicCheckout = () => {
           firstAmount={depositTotal}
           secondAmount={remainingTotal}
           secondPaymentDate="2026-01-06T00:00:00Z"
-          title={`${packageInfo.name} ${selectedAddons.length > 0 ? '+ Add-ons' : ''}`}
-          description={`Pay €${(depositTotal / 100).toFixed(2)} deposit now (includes ${addonsList}), €${(remainingTotal / 100).toFixed(2)} due by January 6th`}
+          title={`€${packageInfo.deposit / 100} Deposit${selectedAddons.length > 0 ? ' + Add-ons' : ''}`}
+          description={`Pay €${(depositTotal / 100).toFixed(2)} now, €${(remainingTotal / 100).toFixed(2)} Charged Automatically January 6th`}
+          packageType={basePackage}
+          selectedAddons={addonKeys}
+          adminFee={adminFee}
         />
       </div>
     </div>

@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.trigger-payment-now]
 verify_jwt = false
+
+[functions.cancel-booking]
+verify_jwt = false

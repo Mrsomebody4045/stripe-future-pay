@@ -16,9 +16,12 @@ interface PaymentProps {
   secondPaymentDate: string;
   title?: string;
   description?: string;
+  packageType?: string;
+  selectedAddons?: string[];
+  adminFee?: number;
 }
 
-const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, description }: PaymentProps) => {
+const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, description, packageType, selectedAddons, adminFee }: PaymentProps) => {
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
@@ -77,6 +80,8 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
               first_amount: firstAmount,
               second_amount: secondAmount,
               second_payment_date: secondPaymentDate,
+              package_type: packageType,
+              selected_addons: selectedAddons || []
             },
           });
 
@@ -165,6 +170,8 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
           first_amount: firstAmount,
           second_amount: secondAmount,
           second_payment_date: secondPaymentDate,
+          package_type: packageType,
+          selected_addons: selectedAddons || []
         },
       });
 
@@ -325,8 +332,13 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
             <h4 className="font-medium mb-2">Payment Schedule:</h4>
             <ul className="text-sm space-y-1">
               <li>• Today: €{(firstAmount / 100).toFixed(2)}</li>
-              <li>• {new Date(secondPaymentDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}: €{(secondAmount / 100).toFixed(2)}</li>
-              <li className="font-medium">• Total: €{((firstAmount + secondAmount) / 100).toFixed(2)}</li>
+              {adminFee && <li className="text-muted-foreground">• Admin fee: €{(adminFee / 100).toFixed(2)}</li>}
+              <li>• €{(secondAmount / 100).toFixed(2)} Charged Automatically by {new Date(secondPaymentDate).toLocaleDateString('en-GB', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}</li>
+              <li className="font-medium border-t pt-2 mt-2">• Total: €{((firstAmount + secondAmount) / 100).toFixed(2)}</li>
             </ul>
           </div>
 

@@ -13,11 +13,14 @@ const Package185 = () => {
           </p>
         </div>
         <InstallmentPayment 
-          firstAmount={5600}
+          firstAmount={5300}
           secondAmount={12900}
           secondPaymentDate="2026-01-06T00:00:00Z"
-          title="€185 Package Payment"
-          description="Pay €56 deposit now, €129 due by January 6th"
+          title="€50 Deposit"
+          description="Pay €53 deposit now (includes €3 admin fee), €129 Charged Automatically January 6th"
+          packageType="185"
+          selectedAddons={[]}
+          adminFee={300}
         />
       </div>
     </div>

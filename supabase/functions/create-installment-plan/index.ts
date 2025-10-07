@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { customer_name, customer_email, first_amount, second_amount, second_payment_date } = await req.json();
+    const { customer_name, customer_email, first_amount, second_amount, second_payment_date, package_type, selected_addons } = await req.json();
 
     console.log('Creating installment plan for:', customer_email);
 
@@ -56,7 +56,9 @@ serve(async (req) => {
         total_amount: first_amount + second_amount,
         currency: 'eur',
         stripe_customer_id: customer.id,
-        status: 'pending'
+        status: 'pending',
+        package_type: package_type || null,
+        selected_addons: selected_addons || []
       })
       .select()
       .single();
