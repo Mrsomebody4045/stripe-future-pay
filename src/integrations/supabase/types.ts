@@ -153,6 +153,7 @@ export type Database = {
       }
       guests: {
         Row: {
+          add_ons: Json | null
           booking_id: string
           created_at: string | null
           date_of_birth: string
@@ -163,6 +164,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          add_ons?: Json | null
           booking_id: string
           created_at?: string | null
           date_of_birth: string
@@ -173,6 +175,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          add_ons?: Json | null
           booking_id?: string
           created_at?: string | null
           date_of_birth?: string
