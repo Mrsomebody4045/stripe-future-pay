@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 export default function Dashboard() {
   const { toast } = useToast();
@@ -98,7 +99,17 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <h1 className="text-4xl font-bold mb-8">Dashboard</h1>
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold">Dashboard</h1>
+          <div className="flex gap-3">
+            <Link to="/cancel">
+              <Button variant="destructive">Cancel Booking</Button>
+            </Link>
+            <Link to="/add-more">
+              <Button>Add More</Button>
+            </Link>
+          </div>
+        </div>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
