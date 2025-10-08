@@ -41,13 +41,19 @@ export default function AddMore() {
     e.preventDefault();
     
     try {
-      const { data, error } = await supabase.from("guests").insert({
+      const guestData: any = {
         name: guestName,
         email: guestEmail,
         phone: guestPhone,
         date_of_birth: guestDOB,
-        booking_id: bookingId,
-      });
+      };
+
+      // Only add booking_id if it's provided
+      if (bookingId.trim()) {
+        guestData.booking_id = bookingId;
+      }
+
+      const { data, error } = await supabase.from("guests").insert(guestData);
 
       if (error) throw error;
 
@@ -224,13 +230,12 @@ export default function AddMore() {
                 </div>
 
                 <div>
-                  <Label htmlFor="booking-id">Booking ID</Label>
+                  <Label htmlFor="booking-id">Booking ID (Optional)</Label>
                   <Input
                     id="booking-id"
                     value={bookingId}
                     onChange={(e) => setBookingId(e.target.value)}
-                    required
-                    placeholder="Enter booking ID"
+                    placeholder="Enter booking ID (optional)"
                   />
                 </div>
 
