@@ -37,15 +37,39 @@ const Index = () => {
     // All four add-ons
     baseCombinations.push(addons.join('+'));
     
-    // Now create all 64 combinations (16 base × 4 day variations)
+    // Create variations where Ski2Day replaces Ski, Snowboard2Day replaces Snowboard
     const allCombinations: string[] = [];
     
     baseCombinations.forEach(base => {
-      dayVariations.forEach(dayVar => {
-        const parts = [base, dayVar].filter(p => p !== '');
-        const combo = parts.length > 0 ? `/${basePackage}+${parts.join('+')}` : `/${basePackage}`;
-        allCombinations.push(combo);
-      });
+      const parts = base ? base.split('+') : [];
+      const hasSki = parts.includes('Ski');
+      const hasSnowboard = parts.includes('Snowboard');
+      
+      // Always add the base combination
+      const baseCombo = base ? `/${basePackage}+${base}` : `/${basePackage}`;
+      allCombinations.push(baseCombo);
+      
+      // If has Ski, create a variant with Ski2Day replacing Ski
+      if (hasSki) {
+        const withSki2Day = parts.map(p => p === 'Ski' ? 'Ski2Day' : p).join('+');
+        allCombinations.push(`/${basePackage}+${withSki2Day}`);
+      }
+      
+      // If has Snowboard, create a variant with Snowboard2Day replacing Snowboard
+      if (hasSnowboard) {
+        const withSnowboard2Day = parts.map(p => p === 'Snowboard' ? 'Snowboard2Day' : p).join('+');
+        allCombinations.push(`/${basePackage}+${withSnowboard2Day}`);
+      }
+      
+      // If has both Ski and Snowboard, create a variant with both replaced
+      if (hasSki && hasSnowboard) {
+        const withBoth2Day = parts.map(p => {
+          if (p === 'Ski') return 'Ski2Day';
+          if (p === 'Snowboard') return 'Snowboard2Day';
+          return p;
+        }).join('+');
+        allCombinations.push(`/${basePackage}+${withBoth2Day}`);
+      }
     });
     
     return allCombinations;
