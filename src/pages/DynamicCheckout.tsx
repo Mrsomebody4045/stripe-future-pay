@@ -1,61 +1,26 @@
 import { useParams, Navigate } from 'react-router-dom';
 import { InstallmentPayment } from "@/components/InstallmentPayment";
 
-// Legacy add-ons (fixed price)
-const LEGACY_ADDONS = {
+// Add-ons with fixed prices
+const ADDONS = {
   'Quad': { name: 'Quad Bike Adventure', price: 5000 },
   'Ski': { name: 'Ski gear', price: 1650 },
   'Snowboard': { name: 'Snowboard gear', price: 2250 },
   'Lessons': { name: 'Lessons (2hr session)', price: 5000 },
-} as const;
-
-// New day/people-based add-ons
-const ADDON_PRICING = {
-  'SkiGear': { name: 'Ski Gear', pricePerUnit: 1650, unit: 'day', minUnits: 1, maxUnits: 2 },
-  'SnowboardGear': { name: 'Snowboard Gear', pricePerUnit: 2250, unit: 'day', minUnits: 1, maxUnits: 2 },
-  'Lessons': { name: 'Lessons (2hr session)', pricePerUnit: 5000, unit: 'person', minUnits: 1, maxUnits: 15 },
+  'Ski2Day': { name: 'Ski gear (2 days)', price: 3300 },
+  'Snowboard2Day': { name: 'Snowboard gear (2 days)', price: 4500 },
 } as const;
 
 // Parse add-on from slug
 const parseAddon = (addonStr: string) => {
-  // Check if it's a legacy addon first (Quad, Ski, Snowboard, Lessons)
-  if (addonStr in LEGACY_ADDONS) {
-    const addon = LEGACY_ADDONS[addonStr as keyof typeof LEGACY_ADDONS];
+  if (addonStr in ADDONS) {
+    const addon = ADDONS[addonStr as keyof typeof ADDONS];
     return {
       key: addonStr,
       name: addon.name,
       price: addon.price,
-      type: 'legacy' as const
     };
   }
-  
-  // Try to match pattern: AddonName + Number + Unit (e.g., "SkiGear1day", "Lessons5people")
-  const match = addonStr.match(/^([A-Za-z]+)(\d+)(day|days|person|people)$/);
-  
-  if (match) {
-    const [, addonType, quantityStr] = match;
-    const quantity = parseInt(quantityStr);
-    
-    if (addonType in ADDON_PRICING) {
-      const config = ADDON_PRICING[addonType as keyof typeof ADDON_PRICING];
-      
-      // Validate quantity is within limits
-      if (quantity < config.minUnits || quantity > config.maxUnits) return null;
-      
-      const price = config.pricePerUnit * quantity;
-      const displayName = quantity === 1 
-        ? `${config.name} (${quantity} ${config.unit})`
-        : `${config.name} (${quantity} ${config.unit}s)`;
-      
-      return {
-        key: addonStr,
-        name: displayName,
-        price,
-        type: 'quantified' as const
-      };
-    }
-  }
-  
   return null;
 };
 

@@ -3,21 +3,25 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 const Index = () => {
   const addons = ['Quad', 'Ski', 'Snowboard', 'Lessons'];
+  const dayVariations = ['', 'Ski2Day', 'Snowboard2Day', 'Ski2Day+Snowboard2Day'];
   const packages = ['185', '245'];
   
   const generateCombinations = (basePackage: string) => {
-    const combinations: string[] = [`/${basePackage}`];
+    const baseCombinations: string[] = [];
     
-    // OLD COMBINATIONS - Multiple add-ons together
+    // Generate all 16 base combinations (2^4 = 16)
+    // Empty combination (base package only)
+    baseCombinations.push('');
+    
     // Single add-ons
     addons.forEach(addon => {
-      combinations.push(`/${basePackage}+${addon}`);
+      baseCombinations.push(addon);
     });
     
     // Two add-ons
     for (let i = 0; i < addons.length; i++) {
       for (let j = i + 1; j < addons.length; j++) {
-        combinations.push(`/${basePackage}+${addons[i]}+${addons[j]}`);
+        baseCombinations.push(`${addons[i]}+${addons[j]}`);
       }
     }
     
@@ -25,34 +29,26 @@ const Index = () => {
     for (let i = 0; i < addons.length; i++) {
       for (let j = i + 1; j < addons.length; j++) {
         for (let k = j + 1; k < addons.length; k++) {
-          combinations.push(`/${basePackage}+${addons[i]}+${addons[j]}+${addons[k]}`);
+          baseCombinations.push(`${addons[i]}+${addons[j]}+${addons[k]}`);
         }
       }
     }
     
     // All four add-ons
-    combinations.push(`/${basePackage}+${addons.join('+')}`);
+    baseCombinations.push(addons.join('+'));
     
-    // NEW COMBINATIONS - Day/people-based add-ons
-    // Ski Gear: 1-2 days
-    for (let days = 1; days <= 2; days++) {
-      const suffix = days === 1 ? 'day' : 'days';
-      combinations.push(`/${basePackage}+SkiGear${days}${suffix}`);
-    }
+    // Now create all 64 combinations (16 base × 4 day variations)
+    const allCombinations: string[] = [];
     
-    // Snowboard Gear: 1-2 days
-    for (let days = 1; days <= 2; days++) {
-      const suffix = days === 1 ? 'day' : 'days';
-      combinations.push(`/${basePackage}+SnowboardGear${days}${suffix}`);
-    }
+    baseCombinations.forEach(base => {
+      dayVariations.forEach(dayVar => {
+        const parts = [base, dayVar].filter(p => p !== '');
+        const combo = parts.length > 0 ? `/${basePackage}+${parts.join('+')}` : `/${basePackage}`;
+        allCombinations.push(combo);
+      });
+    });
     
-    // Lessons: 1-15 people
-    for (let people = 1; people <= 15; people++) {
-      const suffix = people === 1 ? 'person' : 'people';
-      combinations.push(`/${basePackage}+Lessons${people}${suffix}`);
-    }
-    
-    return combinations;
+    return allCombinations;
   };
 
   return (
