@@ -2,36 +2,31 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 const Index = () => {
-  // Generate all combinations
-  const addons = ['Quad', 'Ski', 'Snowboard', 'Lessons'];
   const packages = ['185', '245'];
   
   const generateCombinations = (basePackage: string) => {
     const combinations: string[] = [`/${basePackage}`];
     
-    // Single add-ons
-    addons.forEach(addon => {
-      combinations.push(`/${basePackage}+${addon}`);
-    });
-    
-    // Two add-ons
-    for (let i = 0; i < addons.length; i++) {
-      for (let j = i + 1; j < addons.length; j++) {
-        combinations.push(`/${basePackage}+${addons[i]}+${addons[j]}`);
-      }
+    // Ski Gear: 1-2 days
+    for (let days = 1; days <= 2; days++) {
+      const suffix = days === 1 ? 'day' : 'days';
+      combinations.push(`/${basePackage}+SkiGear${days}${suffix}`);
     }
     
-    // Three add-ons
-    for (let i = 0; i < addons.length; i++) {
-      for (let j = i + 1; j < addons.length; j++) {
-        for (let k = j + 1; k < addons.length; k++) {
-          combinations.push(`/${basePackage}+${addons[i]}+${addons[j]}+${addons[k]}`);
-        }
-      }
+    // Snowboard Gear: 1-2 days
+    for (let days = 1; days <= 2; days++) {
+      const suffix = days === 1 ? 'day' : 'days';
+      combinations.push(`/${basePackage}+SnowboardGear${days}${suffix}`);
     }
     
-    // All four add-ons
-    combinations.push(`/${basePackage}+${addons.join('+')}`);
+    // Lessons: 1-15 people
+    for (let people = 1; people <= 15; people++) {
+      const suffix = people === 1 ? 'person' : 'people';
+      combinations.push(`/${basePackage}+Lessons${people}${suffix}`);
+    }
+    
+    // Quad (legacy)
+    combinations.push(`/${basePackage}+Quad`);
     
     return combinations;
   };
