@@ -45,8 +45,13 @@ const DynamicCheckout = () => {
   
   if (!slug) return <Navigate to="/" />;
 
-  // Parse the slug (e.g., "185+Quad+Ski" or "245+SkiGear1day+Lessons5people")
-  const parts = slug.split('+');
+  // Parse the slug (e.g., "185+Quad+Ski" or "185+Quad+Ski*5")
+  // Check for people count at the end (e.g., "*5")
+  const peopleMatch = slug.match(/\*(\d+)$/);
+  const numberOfPeople = peopleMatch ? parseInt(peopleMatch[1]) : 1;
+  const slugWithoutPeople = peopleMatch ? slug.replace(/\*\d+$/, '') : slug;
+  
+  const parts = slugWithoutPeople.split('+');
   const basePackage = parts[0] as keyof typeof PACKAGES;
   const addonStrings = parts.slice(1);
 
@@ -64,8 +69,10 @@ const DynamicCheckout = () => {
   const packageInfo = PACKAGES[basePackage];
   const addonsTotal = selectedAddons.reduce((sum, addon) => sum + addon.price, 0);
   const adminFee = 300;
-  const depositTotal = packageInfo.deposit + addonsTotal + adminFee;
-  const remainingTotal = packageInfo.remaining;
+  
+  // Multiply by number of people
+  const depositTotal = (packageInfo.deposit + addonsTotal) * numberOfPeople + adminFee;
+  const remainingTotal = packageInfo.remaining * numberOfPeople;
 
   // Build description
   const addonsList = selectedAddons.length > 0 
@@ -81,6 +88,7 @@ const DynamicCheckout = () => {
           </h1>
           <h2 className="text-2xl font-semibold text-muted-foreground">
             {basePackage === '185' ? '€185 Package' : '€245 Package'}
+            {numberOfPeople > 1 && ` - ${numberOfPeople} People`}
           </h2>
           <div className="space-y-2">
             {selectedAddons.length > 0 && (

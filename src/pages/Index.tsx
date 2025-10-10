@@ -38,7 +38,7 @@ const Index = () => {
     baseCombinations.push(addons.join('+'));
     
     // Create variations where Ski2Day replaces Ski, Snowboard2Day replaces Snowboard
-    const allCombinations: string[] = [];
+    const allBaseCombinations: string[] = [];
     
     baseCombinations.forEach(base => {
       const parts = base ? base.split('+') : [];
@@ -46,19 +46,19 @@ const Index = () => {
       const hasSnowboard = parts.includes('Snowboard');
       
       // Always add the base combination
-      const baseCombo = base ? `/${basePackage}+${base}` : `/${basePackage}`;
-      allCombinations.push(baseCombo);
+      const baseCombo = base ? `${base}` : '';
+      allBaseCombinations.push(baseCombo);
       
       // If has Ski, create a variant with Ski2Day replacing Ski
       if (hasSki) {
         const withSki2Day = parts.map(p => p === 'Ski' ? 'Ski2Day' : p).join('+');
-        allCombinations.push(`/${basePackage}+${withSki2Day}`);
+        allBaseCombinations.push(withSki2Day);
       }
       
       // If has Snowboard, create a variant with Snowboard2Day replacing Snowboard
       if (hasSnowboard) {
         const withSnowboard2Day = parts.map(p => p === 'Snowboard' ? 'Snowboard2Day' : p).join('+');
-        allCombinations.push(`/${basePackage}+${withSnowboard2Day}`);
+        allBaseCombinations.push(withSnowboard2Day);
       }
       
       // If has both Ski and Snowboard, create a variant with both replaced
@@ -68,7 +68,22 @@ const Index = () => {
           if (p === 'Snowboard') return 'Snowboard2Day';
           return p;
         }).join('+');
-        allCombinations.push(`/${basePackage}+${withBoth2Day}`);
+        allBaseCombinations.push(withBoth2Day);
+      }
+    });
+    
+    // Now generate all combinations with people counts (1 person = default, 2-15 people)
+    const allCombinations: string[] = [];
+    
+    allBaseCombinations.forEach(combo => {
+      // Default (1 person, no suffix)
+      const defaultPath = combo ? `/${basePackage}+${combo}` : `/${basePackage}`;
+      allCombinations.push(defaultPath);
+      
+      // 2-15 people variants
+      for (let people = 2; people <= 15; people++) {
+        const peoplePath = combo ? `/${basePackage}+${combo}*${people}` : `/${basePackage}*${people}`;
+        allCombinations.push(peoplePath);
       }
     });
     
