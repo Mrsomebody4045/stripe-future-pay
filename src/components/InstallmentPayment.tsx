@@ -30,6 +30,7 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
   const [loading, setLoading] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [paymentRequest, setPaymentRequest] = useState<any>(null);
   const [canMakePayment, setCanMakePayment] = useState(false);
 
@@ -64,11 +65,11 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
       pr.on('paymentmethod', async (event) => {
         try {
           // Validate required fields
-          if (!event.payerName || !event.payerEmail) {
+          if (!event.payerName || !event.payerEmail || !customerPhone) {
             event.complete('fail');
             toast({
               title: "Error",
-              description: "Name and email are required for installment payments",
+              description: "Name, email, and phone number are required for installment payments",
               variant: "destructive",
             });
             return;
@@ -79,6 +80,7 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
             body: {
               customer_name: event.payerName,
               customer_email: event.payerEmail,
+              customer_phone: customerPhone,
               first_amount: firstAmount,
               second_amount: secondAmount,
               second_payment_date: secondPaymentDate,
@@ -154,7 +156,7 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
-    if (!stripe || !elements || !customerName || !customerEmail) {
+    if (!stripe || !elements || !customerName || !customerEmail || !customerPhone) {
       toast({
         title: "Error",
         description: "Please fill in all fields",
@@ -174,6 +176,7 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
         body: {
           customer_name: customerName,
           customer_email: customerEmail,
+          customer_phone: customerPhone,
           first_amount: firstAmount,
           second_amount: secondAmount,
           second_payment_date: secondPaymentDate,
@@ -283,6 +286,18 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
               value={customerEmail}
               onChange={(e) => setCustomerEmail(e.target.value)}
               placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="phone">Phone Number</Label>
+            <Input
+              id="phone"
+              type="tel"
+              value={customerPhone}
+              onChange={(e) => setCustomerPhone(e.target.value)}
+              placeholder="Enter your phone number"
               required
             />
           </div>

@@ -14,7 +14,7 @@ serve(async (req) => {
   }
 
   try {
-    const { customer_name, customer_email, first_amount, second_amount, second_payment_date, package_type, selected_addons } = await req.json();
+    const { customer_name, customer_email, customer_phone, first_amount, second_amount, second_payment_date, package_type, selected_addons } = await req.json();
 
     console.log('Creating installment plan for:', customer_email);
 
@@ -53,6 +53,7 @@ serve(async (req) => {
       .insert({
         customer_email,
         customer_name,
+        customer_phone: customer_phone || null,
         total_amount: first_amount + second_amount,
         currency: 'eur',
         stripe_customer_id: customer.id,

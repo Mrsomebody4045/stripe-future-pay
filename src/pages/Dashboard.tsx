@@ -346,7 +346,9 @@ export default function Dashboard() {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left p-2">ID</th>
+                    <th className="text-left p-2">Name</th>
                     <th className="text-left p-2">Email</th>
+                    <th className="text-left p-2">Phone</th>
                     <th className="text-left p-2">Total Amount</th>
                     <th className="text-left p-2">Status</th>
                     <th className="text-left p-2">Package</th>
@@ -356,7 +358,9 @@ export default function Dashboard() {
                   {installmentPlans.slice(0, 10).map((plan) => (
                     <tr key={plan.id} className="border-b">
                       <td className="p-2">{plan.id}</td>
+                      <td className="p-2">{plan.customer_name || 'N/A'}</td>
                       <td className="p-2">{plan.customer_email}</td>
+                      <td className="p-2">{plan.customer_phone || 'N/A'}</td>
                       <td className="p-2">€{(plan.total_amount / 100).toFixed(2)}</td>
                       <td className="p-2">{plan.status}</td>
                       <td className="p-2">{plan.package_type}</td>

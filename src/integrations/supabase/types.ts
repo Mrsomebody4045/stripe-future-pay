@@ -250,6 +250,7 @@ export type Database = {
           currency: string
           customer_email: string
           customer_name: string | null
+          customer_phone: string | null
           id: string
           package_type: string | null
           selected_addons: Json | null
@@ -265,6 +266,7 @@ export type Database = {
           currency?: string
           customer_email: string
           customer_name?: string | null
+          customer_phone?: string | null
           id?: string
           package_type?: string | null
           selected_addons?: Json | null
@@ -280,6 +282,7 @@ export type Database = {
           currency?: string
           customer_email?: string
           customer_name?: string | null
+          customer_phone?: string | null
           id?: string
           package_type?: string | null
           selected_addons?: Json | null
