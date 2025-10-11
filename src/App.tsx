@@ -10,6 +10,8 @@ import DynamicCheckout from "./pages/DynamicCheckout";
 import Cancel from "./pages/Cancel";
 import Dashboard from "./pages/Dashboard";
 import AddMore from "./pages/AddMore";
+import Success from "./pages/Success";
+import Failure from "./pages/Failure";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +29,8 @@ const App = () => (
           <Route path="/cancel" element={<Cancel />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/add-more" element={<AddMore />} />
+          <Route path="/success" element={<Success />} />
+          <Route path="/failure" element={<Failure />} />
           <Route path="/:slug" element={<DynamicCheckout />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

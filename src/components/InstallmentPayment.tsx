@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements, PaymentRequestButtonElement } from '@stripe/react-stripe-js';
+import { useNavigate } from 'react-router-dom';
 
 const stripePromise = loadStripe('pk_live_51S1VA0Lb8rPy9vMDy4jdzYaXKxvd5NawJ3GsGRUnMnKGLgSIj0GsqJ1bVidhzQXq7WbLo2JD88HsMivfOZ9ddXyU00uI1Zy6t3');
 
@@ -25,6 +26,7 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
   const stripe = useStripe();
   const elements = useElements();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -122,23 +124,27 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
       }
 
       event.complete('success');
-          toast({
-            title: "Payment Successful!",
-            description: `First payment of €${(firstAmount / 100).toFixed(2)} completed. Next payment of €${(secondAmount / 100).toFixed(2)} will be automatically charged on ${new Date(secondPaymentDate).toLocaleDateString()}.`,
+          
+          // Redirect to success page
+          const searchParams = new URLSearchParams({
+            amount: (firstAmount / 100).toFixed(2),
+            secondAmount: (secondAmount / 100).toFixed(2),
+            date: secondPaymentDate,
+            email: event.payerEmail
           });
-
-          // Reset form
-          setCustomerName('');
-          setCustomerEmail('');
+          navigate(`/success?${searchParams.toString()}`);
 
         } catch (error) {
           console.error('Payment failed:', error);
           event.complete('fail');
-          toast({
-            title: "Payment Failed",
-            description: error instanceof Error ? error.message : "An error occurred",
-            variant: "destructive",
+          
+          // Redirect to failure page
+          const errorMessage = error instanceof Error ? error.message : "An error occurred";
+          const searchParams = new URLSearchParams({
+            error: errorMessage,
+            return: window.location.pathname
           });
+          navigate(`/failure?${searchParams.toString()}`);
         }
       });
     }
@@ -221,25 +227,25 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
         console.error('Error updating payment status:', updateError);
       }
 
-      toast({
-        title: "Payment Successful!",
-        description: `First payment of €${(firstAmount / 100).toFixed(2)} completed. Next payment of €${(secondAmount / 100).toFixed(2)} will be automatically charged on ${new Date(secondPaymentDate).toLocaleDateString()}.`,
+      // Redirect to success page
+      const searchParams = new URLSearchParams({
+        amount: (firstAmount / 100).toFixed(2),
+        secondAmount: (secondAmount / 100).toFixed(2),
+        date: secondPaymentDate,
+        email: customerEmail
       });
-
-      // Reset form
-      setCustomerName('');
-      setCustomerEmail('');
-      
-      // Clear card element
-      elements.getElement(CardElement)?.clear();
+      navigate(`/success?${searchParams.toString()}`);
 
     } catch (error) {
       console.error('Payment failed:', error);
-      toast({
-        title: "Payment Failed",
-        description: error instanceof Error ? error.message : "An error occurred",
-        variant: "destructive",
+      
+      // Redirect to failure page
+      const errorMessage = error instanceof Error ? error.message : "An error occurred";
+      const searchParams = new URLSearchParams({
+        error: errorMessage,
+        return: window.location.pathname
       });
+      navigate(`/failure?${searchParams.toString()}`);
     } finally {
       setLoading(false);
     }
