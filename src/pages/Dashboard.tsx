@@ -96,8 +96,8 @@ export default function Dashboard() {
     if (password === "MO1345") {
       setIsAuthenticated(true);
       toast({
-        title: "Access Granted",
-        description: "Welcome to the dashboard",
+        title: "Welcome Michael",
+        description: "Access granted to the dashboard",
       });
     } else {
       toast({

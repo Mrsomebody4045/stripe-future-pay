@@ -121,6 +121,7 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
 
       if (updateError) {
         console.error('Error updating payment status:', updateError);
+        throw new Error('Payment successful but failed to update record. Please contact support.');
       }
 
       event.complete('success');
@@ -225,6 +226,7 @@ const CheckoutForm = ({ firstAmount, secondAmount, secondPaymentDate, title, des
 
       if (updateError) {
         console.error('Error updating payment status:', updateError);
+        throw new Error('Payment successful but failed to update record. Please contact support.');
       }
 
       // Redirect to success page

@@ -39,13 +39,11 @@ export default function Failure() {
           </div>
 
           <div className="flex gap-3">
-            <Button 
-              variant="outline" 
-              className="flex-1"
-              onClick={() => navigate(-1)}
-            >
-              Go Back
-            </Button>
+            <a href="https://www.trakiatrips.com" className="flex-1">
+              <Button variant="outline" className="w-full">
+                Go Back
+              </Button>
+            </a>
             <Link to={returnUrl} className="flex-1">
               <Button className="w-full">
                 Try Again

@@ -50,24 +50,16 @@ export default function Success() {
           <div className="space-y-3">
             <h3 className="font-semibold">What's Next?</h3>
             <ul className="text-sm space-y-2 text-muted-foreground">
-              <li>✓ Check your email for booking confirmation</li>
               <li>✓ Your second payment will be automatically charged on the scheduled date</li>
               <li>✓ Contact us if you need to make any changes</li>
             </ul>
           </div>
 
-          <div className="flex gap-3">
-            <Link to="/" className="flex-1">
-              <Button variant="outline" className="w-full">
-                Return Home
-              </Button>
-            </Link>
-            <Link to="/dashboard" className="flex-1">
-              <Button className="w-full">
-                View Dashboard
-              </Button>
-            </Link>
-          </div>
+          <a href="https://www.trakiatrips.com" className="block">
+            <Button variant="outline" className="w-full">
+              Return
+            </Button>
+          </a>
         </CardContent>
       </Card>
     </div>
