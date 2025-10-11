@@ -29,13 +29,13 @@ const PACKAGES = {
   '185': { 
     name: '€185 Package',
     deposit: 5000, // €50
-    remaining: 12900, // €129
+    remaining: 13500, // €135
     total: 18500
   },
   '245': { 
     name: '€245 Package',
     deposit: 7500, // €75
-    remaining: 17100, // €171
+    remaining: 17000, // €170
     total: 24500
   },
 } as const;
@@ -99,7 +99,7 @@ const DynamicCheckout = () => {
                     <li key={addon.key} className="flex justify-between">
                       <span>{addon.name}</span>
                       <span className="font-medium">
-                        €{(addon.price / 100).toFixed(2)}
+                        €{(addon.price / 100).toFixed(2)}{numberOfPeople > 1 && ` × ${numberOfPeople}`}
                       </span>
                     </li>
                   ))}
@@ -107,7 +107,10 @@ const DynamicCheckout = () => {
               </div>
             )}
           </div>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-xl font-semibold text-primary">
+            Deposit Due Today: €{(depositTotal / 100).toFixed(2)}
+          </p>
+          <p className="text-lg text-muted-foreground">
             Secure your trip with our flexible payment plan
           </p>
         </div>
@@ -115,8 +118,8 @@ const DynamicCheckout = () => {
           firstAmount={depositTotal}
           secondAmount={remainingTotal}
           secondPaymentDate="2026-01-06T00:00:00Z"
-          title={`€${packageInfo.deposit / 100} Deposit${selectedAddons.length > 0 ? ' + Add-ons' : ''}`}
-          description={`Pay €${(depositTotal / 100).toFixed(2)} now, €${(remainingTotal / 100).toFixed(2)} Charged Automatically January 6th`}
+          title={`Deposit Due Today`}
+          description={`Payment Schedule:\n• Today: €${(depositTotal / 100).toFixed(2)}\n• Admin Fee: €3.00 (included in today's total)\n• Remaining €${(remainingTotal / 100).toFixed(2)} charged automatically by 6 January 2026\n• Total: €${((depositTotal + remainingTotal) / 100).toFixed(2)}`}
           packageType={basePackage}
           selectedAddons={addonStrings}
           adminFee={adminFee}
