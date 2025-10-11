@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
@@ -15,6 +16,8 @@ export default function Dashboard() {
   const [installmentPlans, setInstallmentPlans] = useState<any[]>([]);
   const [paymentTransactions, setPaymentTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     fetchAllData();
@@ -88,6 +91,48 @@ export default function Dashboard() {
     });
   };
 
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === "MO1345") {
+      setIsAuthenticated(true);
+      toast({
+        title: "Access Granted",
+        description: "Welcome to the dashboard",
+      });
+    } else {
+      toast({
+        title: "Access Denied",
+        description: "Incorrect password",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Dashboard Access</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <Input
+                type="password"
+                placeholder="Enter password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button type="submit" className="w-full">
+                Access Dashboard
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -129,6 +174,10 @@ export default function Dashboard() {
                     <th className="text-left p-2">Package</th>
                     <th className="text-left p-2">Amount</th>
                     <th className="text-left p-2">Status</th>
+                    <th className="text-left p-2">Payment Plan</th>
+                    <th className="text-left p-2">Guests</th>
+                    <th className="text-left p-2">Flight</th>
+                    <th className="text-left p-2">Add-ons</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -139,6 +188,14 @@ export default function Dashboard() {
                       <td className="p-2">{booking.package_name}</td>
                       <td className="p-2">€{booking.total_amount}</td>
                       <td className="p-2">{booking.payment_status}</td>
+                      <td className="p-2">{booking.payment_plan}</td>
+                      <td className="p-2">{booking.number_of_guests}</td>
+                      <td className="p-2">{booking.flight_number || 'N/A'}</td>
+                      <td className="p-2">
+                        {booking.add_ons && Array.isArray(booking.add_ons) && booking.add_ons.length > 0
+                          ? booking.add_ons.map((addon: any) => addon.name || addon).join(', ')
+                          : 'None'}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -208,6 +265,8 @@ export default function Dashboard() {
                     <th className="text-left p-2">Email</th>
                     <th className="text-left p-2">Phone</th>
                     <th className="text-left p-2">Status</th>
+                    <th className="text-left p-2">Role</th>
+                    <th className="text-left p-2">With Lead Name</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -217,6 +276,8 @@ export default function Dashboard() {
                       <td className="p-2">{lead.email}</td>
                       <td className="p-2">{lead.phone}</td>
                       <td className="p-2">{lead.status}</td>
+                      <td className="p-2">{lead.role || 'N/A'}</td>
+                      <td className="p-2">{lead.with_lead_name || 'N/A'}</td>
                     </tr>
                   ))}
                 </tbody>
