@@ -96,7 +96,9 @@ serve(async (req) => {
         amount: first_amount,
         due_date: new Date().toISOString(),
         stripe_payment_intent_id: paymentIntent.id, // Link to payment intent
-        status: 'pending' // Will be updated to succeeded after payment confirmation
+        status: 'pending', // Will be updated to succeeded after payment confirmation
+        customer_name: customer_name,
+        customer_email: customer_email
       })
       .select()
       .single();
@@ -112,7 +114,9 @@ serve(async (req) => {
         plan_id: plan.id,
         amount: second_amount,
         due_date: second_payment_date,
-        status: 'pending'
+        status: 'pending',
+        customer_name: customer_name,
+        customer_email: customer_email
       });
 
     if (secondPaymentError) {

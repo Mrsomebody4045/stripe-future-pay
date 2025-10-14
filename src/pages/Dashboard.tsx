@@ -312,6 +312,7 @@ export default function Dashboard() {
                 <thead>
                   <tr className="border-b">
                     <th className="text-left p-2">ID</th>
+                    <th className="text-left p-2">Customer Name</th>
                     <th className="text-left p-2">Plan ID</th>
                     <th className="text-left p-2">Amount</th>
                     <th className="text-left p-2">Status</th>
@@ -322,6 +323,7 @@ export default function Dashboard() {
                   {installmentPayments.slice(0, 10).map((payment) => (
                     <tr key={payment.id} className="border-b">
                       <td className="p-2">{payment.id}</td>
+                      <td className="p-2">{payment.customer_name || 'N/A'}</td>
                       <td className="p-2">{payment.plan_id}</td>
                       <td className="p-2">€{(payment.amount / 100).toFixed(2)}</td>
                       <td className="p-2">{payment.status}</td>
