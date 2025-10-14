@@ -162,6 +162,7 @@ export type Database = {
           name: string
           phone: string
           updated_at: string | null
+          with_lead_name: string | null
         }
         Insert: {
           add_ons?: Json | null
@@ -173,6 +174,7 @@ export type Database = {
           name: string
           phone: string
           updated_at?: string | null
+          with_lead_name?: string | null
         }
         Update: {
           add_ons?: Json | null
@@ -184,6 +186,7 @@ export type Database = {
           name?: string
           phone?: string
           updated_at?: string | null
+          with_lead_name?: string | null
         }
         Relationships: [
           {
