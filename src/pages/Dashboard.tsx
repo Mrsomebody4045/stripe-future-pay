@@ -225,18 +225,25 @@ export default function Dashboard() {
                     <th className="text-left p-2">Name</th>
                     <th className="text-left p-2">Email</th>
                     <th className="text-left p-2">Phone</th>
+                    <th className="text-left p-2">With Lead Name</th>
                     <th className="text-left p-2">Booking ID</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {guests.slice(0, 10).map((guest) => (
-                    <tr key={guest.id} className="border-b">
-                      <td className="p-2">{guest.name}</td>
-                      <td className="p-2">{guest.email}</td>
-                      <td className="p-2">{guest.phone}</td>
-                      <td className="p-2">{guest.booking_id}</td>
-                    </tr>
-                  ))}
+                  {guests.slice(0, 10).map((guest) => {
+                    const matchingLead = leads.find(lead => 
+                      lead.name?.toLowerCase() === guest.name?.toLowerCase()
+                    );
+                    return (
+                      <tr key={guest.id} className="border-b">
+                        <td className="p-2">{guest.name}</td>
+                        <td className="p-2">{guest.email}</td>
+                        <td className="p-2">{guest.phone}</td>
+                        <td className="p-2">{matchingLead?.with_lead_name || 'N/A'}</td>
+                        <td className="p-2">{guest.booking_id}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
               {guests.length > 10 && (
