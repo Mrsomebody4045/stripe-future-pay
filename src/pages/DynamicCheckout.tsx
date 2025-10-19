@@ -27,16 +27,16 @@ const parseAddon = (addonStr: string) => {
 // Base package info
 const PACKAGES = {
   '185': { 
-    name: '€185 Package',
-    deposit: 5000, // €50
-    remaining: 13500, // €135
-    total: 18500
+    name: '€195 Package',
+    deposit: 5500, // €55
+    remaining: 14000, // €140
+    total: 19500
   },
   '245': { 
-    name: '€245 Package',
-    deposit: 7500, // €75
-    remaining: 17000, // €170
-    total: 24500
+    name: '€255 Package',
+    deposit: 8000, // €80
+    remaining: 17500, // €175
+    total: 25500
   },
 } as const;
 
@@ -87,7 +87,7 @@ const DynamicCheckout = () => {
             Trakia Trips Booking
           </h1>
           <h2 className="text-2xl font-semibold text-muted-foreground">
-            {basePackage === '185' ? '€185 Package' : '€245 Package'}
+            {basePackage === '185' ? '€195 Package' : '€255 Package'}
             {numberOfPeople > 1 && ` - ${numberOfPeople} People`}
           </h2>
           <div className="space-y-2">
