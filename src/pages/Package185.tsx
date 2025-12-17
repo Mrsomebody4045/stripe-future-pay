@@ -6,18 +6,18 @@ const Package185 = () => {
       <div className="space-y-8">
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-primary">
-            Trakia Trips Booking - €195 Package
+            Trakia Trips Booking - €230 Package
           </h1>
           <p className="text-xl text-muted-foreground">
             Secure your trip with our flexible payment plan
           </p>
         </div>
         <InstallmentPayment 
-          firstAmount={5800}
-          secondAmount={14000}
+          firstAmount={6800}
+          secondAmount={16500}
           secondPaymentDate="2026-01-06T00:00:00Z"
           title="Deposit Due Today"
-          description="Payment Schedule:\n• Today: €58.00\n• Admin Fee: €3.00 (included in today's total)\n• Remaining €140.00 charged automatically by 6 January 2026\n• Total: €198.00"
+          description="Payment Schedule:\n• Today: €68.00\n• Admin Fee: €3.00 (included in today's total)\n• Remaining €165.00 charged automatically by 6 January 2026\n• Total: €233.00"
           packageType="185"
           selectedAddons={[]}
           adminFee={300}
